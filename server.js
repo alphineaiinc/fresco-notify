@@ -7,11 +7,11 @@ const app = express();
 app.use(bodyParser.json());
 
 // === CONFIG (from environment variables) ===
-const MANAGER_EMAIL = process.env.MANAGER_EMAIL;
-const MANAGER_PHONE = process.env.MANAGER_PHONE;
+const MANAGER_EMAIL = process.env.MANAGER_EMAIL;   // e.g. manager@fresco.com
+const MANAGER_PHONE = process.env.MANAGER_PHONE;   // e.g. +14163880624
 const TWILIO_SID = process.env.TWILIO_SID;
 const TWILIO_AUTH = process.env.TWILIO_AUTH;
-const TWILIO_NUMBER = process.env.TWILIO_NUMBER; // SMS-capable Twilio number
+const TWILIO_NUMBER = process.env.TWILIO_NUMBER;   // your Twilio SMS number, e.g. +16234625283
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_PASS = process.env.GMAIL_PASS;
 
@@ -42,15 +42,15 @@ app.post("/notify", async (req, res) => {
     // 2. Send SMS
     await twilioClient.messages.create({
       body: `Customer wants to talk. Call them at: ${phone}`,
-      from: TWILIO_NUMBER,     // ✅ SMS number you bought from Twilio
-      to: MANAGER_PHONE        // ✅ Must be verified in trial
+      from: TWILIO_NUMBER,   // must be your Twilio SMS number
+      to: MANAGER_PHONE      // must be verified in trial
     });
 
-    // 3. Send WhatsApp
+    // 3. Send WhatsApp (Sandbox)
     await twilioClient.messages.create({
       body: `Customer wants to talk. Call them at: ${phone}`,
-      from: "whatsapp:+14155238886",       // ✅ Twilio WhatsApp sandbox number
-      to: "whatsapp:" + MANAGER_PHONE      // ✅ Manager's phone in WhatsApp format
+      from: "whatsapp:+14155238886",    // Twilio WhatsApp sandbox number
+      to: "whatsapp:" + MANAGER_PHONE  // must have joined sandbox
     });
 
     res.json({ success: true, message: "Notification sent via Email, SMS, and WhatsApp!" });
