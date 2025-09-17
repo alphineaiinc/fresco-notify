@@ -11,7 +11,7 @@ const MANAGER_EMAIL = process.env.MANAGER_EMAIL;
 const MANAGER_PHONE = process.env.MANAGER_PHONE;
 const TWILIO_SID = process.env.TWILIO_SID;
 const TWILIO_AUTH = process.env.TWILIO_AUTH;
-const TWILIO_NUMBER = process.env.TWILIO_NUMBER;
+const TWILIO_NUMBER = process.env.TWILIO_NUMBER; // SMS-capable Twilio number
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_PASS = process.env.GMAIL_PASS;
 
@@ -42,18 +42,18 @@ app.post("/notify", async (req, res) => {
     // 2. Send SMS
     await twilioClient.messages.create({
       body: `Customer wants to talk. Call them at: ${phone}`,
-      from: TWILIO_NUMBER,
-      to: MANAGER_PHONE
+      from: TWILIO_NUMBER,     // ✅ SMS number you bought from Twilio
+      to: MANAGER_PHONE        // ✅ Must be verified in trial
     });
 
-    // 3. Send WhatsApp (optional)
+    // 3. Send WhatsApp
     await twilioClient.messages.create({
-      from: "whatsapp:+14155238886", // Twilio sandbox
-      to: "whatsapp:" + MANAGER_PHONE,
-      body: `Customer wants to talk. Call them at: ${phone}`
+      body: `Customer wants to talk. Call them at: ${phone}`,
+      from: "whatsapp:+14155238886",       // ✅ Twilio WhatsApp sandbox number
+      to: "whatsapp:" + MANAGER_PHONE      // ✅ Manager's phone in WhatsApp format
     });
 
-    res.json({ success: true, message: "Notification sent!" });
+    res.json({ success: true, message: "Notification sent via Email, SMS, and WhatsApp!" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, error: error.message });
